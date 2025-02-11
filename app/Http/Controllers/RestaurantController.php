@@ -1,58 +1,54 @@
 <?php
 
-namespace App\Http\Controllers;  
+namespace App\Http\Controllers;
 
-use Illuminate\Http\Request; 
-use App\Models\Restaurants;
+use Illuminate\Http\Request;
+use App\Models\Restaurant;
+use App\Models\Category;
 
-Class RestaurantController extends Controller
-{   
-    public function index(){
-    
-        //récupération des donnnées de la table restaurants
-        $restaurants = Restaurants::all();
-
-        //affichage des données sur la page
-        return view('restaurants.show', [
-            'restaurants' => Restaurants::all() 
+class RestaurantController extends Controller
+{
+    public function index() {
+        return view('restaurants.index', [
+            'restaurants' => Restaurant::all()
         ]);
     }
 
     public function create() {
-
         return view('restaurants.create');
     }
 
     public function store(Request $request) {
-        Restaurants::create( $request->all() );
+        Restaurant::create( $request->all() );
         
         return redirect()->route('restaurants.index');
     }
 
-    public function edit($id) {
-        return view('restaurants.edit', [
-            'restaurant' => Restaurants::findOrFail($id)
+    public function show($id) {
+        return view('restaurants.show', [
+            'restaurant' => Restaurant::findOrFail($id)
         ]);
     }
 
-    public function update (Request $request, $id) {
-        $restaurant = Restaurants::findOrFail($id);
+    public function edit($id) {
+        return view('restaurants.edit', [
+            'restaurant' => Restaurant::findOrFail($id)
+        ]);
+    }
 
-        $restaurant->nom = $request->get('nom');
-        $restaurant->description = $request->get('description');
-        $restaurant->place_max = $request->get('place_max');
+    public function update(Request $request, $id) {
+        $restaurant = Restaurant::findOrFail($id);
+
+        $restaurant->name = $request->get('name');
         $restaurant->save();
 
         return redirect()->route('restaurants.index');
     }
 
-    public function destroy (Request $request, $id) {
+    public function destroy(Request $request, $id) {
         if($request->get('id') == $id) {
-            Restaurants::destroy($id);
-        } else {
-            echo ("restaurants introuvable");
+            Restaurant::destroy($id);
         }
         return redirect()->route('restaurants.index');
     }
 }
-

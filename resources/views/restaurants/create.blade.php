@@ -7,14 +7,8 @@
 
     <form action="{{ route('restaurants.store') }}" method="POST">
         @csrf
-        <label for="nom">Nom : </label>
-        <input type="text" id="nom" name="nom" placeholder="Nom">
-        <br/>
-        <label for="description">Déscription : </label>
-        <input type="text" id="description" name="description" placeholder="description">
-        <br/>
-        <label for="place_max">Place Maximum : </label>
-        <input type="int" id="place_max" name="place_max" placeholder="place_max">
+        <label for="name">Nom : </label>
+        <input type="text" id="name" name="name" placeholder="Nom">
         <button type="submit">Envoyer</button>
     </form>
 @endsection
