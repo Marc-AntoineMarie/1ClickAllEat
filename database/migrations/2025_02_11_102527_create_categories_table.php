@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('description')->nullable();
             $table->foreignId('restaurant_id')->constrained('restaurants')->onDelete('cascade');
+            $table->foreignId('menu_id')->nullable()->constrained('menus')->nullOnDelete();
+            $table->integer('order')->default(0);
             $table->timestamps();
         });
     }

@@ -2,53 +2,111 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Restaurant;
-use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RestaurantController extends Controller
 {
-    public function index() {
-        return view('restaurants.index', [
-            'restaurants' => Restaurant::all()
+    /**
+     * Display a listing of all restaurants.
+     */
+    public function index()
+    {
+        $restaurants = Restaurant::all();
+        return view('restaurants.index', compact('restaurants'));
+    }
+
+    /**
+     * Display a listing of the restaurants for the authenticated restaurateur.
+     */
+    public function indexForRestaurateur()
+    {
+        $restaurants = Auth::user()->restaurants;
+        return view('restaurateur.restaurants.index', compact('restaurants'));
+    }
+
+    /**
+     * Show the form for creating a new restaurant.
+     */
+    public function create()
+    {
+        return view('restaurateur.restaurants.create');
+    }
+
+    /**
+     * Store a newly created restaurant in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
         ]);
-    }
 
-    public function create() {
-        return view('restaurants.create');
-    }
-
-    public function store(Request $request) {
-        Restaurant::create( $request->all() );
-        
-        return redirect()->route('restaurants.index');
-    }
-
-    public function show($id) {
-        return view('restaurants.show', [
-            'restaurant' => Restaurant::findOrFail($id)
-        ]);
-    }
-
-    public function edit($id) {
-        return view('restaurants.edit', [
-            'restaurant' => Restaurant::findOrFail($id)
-        ]);
-    }
-
-    public function update(Request $request, $id) {
-        $restaurant = Restaurant::findOrFail($id);
-
-        $restaurant->name = $request->get('name');
+        $restaurant = new Restaurant($validated);
+        $restaurant->owner_id = Auth::id();
         $restaurant->save();
 
-        return redirect()->route('restaurants.index');
+        return redirect()->route('restaurateur.restaurants.index')
+            ->with('success', 'Restaurant créé avec succès.');
     }
 
-    public function destroy(Request $request, $id) {
-        if($request->get('id') == $id) {
-            Restaurant::destroy($id);
+    /**
+     * Display the specified restaurant.
+     */
+    public function show(Restaurant $restaurant)
+    {
+        return view('restaurants.show', compact('restaurant'));
+    }
+
+    /**
+     * Show the form for editing the specified restaurant.
+     */
+    public function edit(Restaurant $restaurant)
+    {
+        if ($restaurant->owner_id !== Auth::id()) {
+            abort(403, 'Non autorisé');
         }
-        return redirect()->route('restaurants.index');
+        return view('restaurateur.restaurants.edit', compact('restaurant'));
+    }
+
+    /**
+     * Update the specified restaurant in storage.
+     */
+    public function update(Request $request, Restaurant $restaurant)
+    {
+        if ($restaurant->owner_id !== Auth::id()) {
+            abort(403, 'Non autorisé');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+        ]);
+
+        $restaurant->update($validated);
+
+        return redirect()->route('restaurateur.restaurants.index')
+            ->with('success', 'Restaurant mis à jour avec succès.');
+    }
+
+    /**
+     * Remove the specified restaurant from storage.
+     */
+    public function destroy(Restaurant $restaurant)
+    {
+        if ($restaurant->owner_id !== Auth::id()) {
+            abort(403, 'Non autorisé');
+        }
+
+        $restaurant->delete();
+
+        return redirect()->route('restaurateur.restaurants.index')
+            ->with('success', 'Restaurant supprimé avec succès.');
     }
 }

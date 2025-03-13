@@ -5,8 +5,14 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Restaurant;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Menu;
+use App\Models\Item;
+use App\Models\Rating;
+use App\Models\Table;
+use App\Models\Reservation;
 use Illuminate\Database\Seeder;
+use Faker\Generator as Faker;
+use Database\Seeders\RestaurantSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,13 +21,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Restaurant::factory(10)->create();
-        Category::factory(10)->create();
+        // Créer un admin
+        User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@clickneat.com',
+            'password' => bcrypt('password'),
+            'role' => 'admin'
+        ]);
 
+        // Créer quelques restaurateurs
+        User::factory()->count(5)->create([
+            'role' => 'restaurateur'
+        ]);
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Créer des clients
+        User::factory()->count(20)->create([
+            'role' => 'client'
+        ]);
+
+        $this->call([
+            RestaurantSeeder::class,
+        ]);
     }
 }
