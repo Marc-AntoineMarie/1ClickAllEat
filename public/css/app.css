@@ -1,0 +1,13 @@
+.cart-icon {
+    font-size: 1.2rem;
+    position: relative;
+    display: inline-block;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 0.7rem;
+    padding: 0.25em 0.4em;
+}

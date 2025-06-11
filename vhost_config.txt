@@ -1,0 +1,15 @@
+# Configuration Virtual Host pour 1ClickAllEat
+<VirtualHost *:80>
+    DocumentRoot "C:/xampp/htdocs/1ClickAllEat/public"
+    ServerName 1clickalleat.local
+    ServerAlias www.1clickalleat.local
+    
+    <Directory "C:/xampp/htdocs/1ClickAllEat/public">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    
+    ErrorLog "logs/1clickalleat-error.log"
+    CustomLog "logs/1clickalleat-access.log" common
+</VirtualHost>
