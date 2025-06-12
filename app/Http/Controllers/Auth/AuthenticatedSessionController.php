@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -28,11 +31,17 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $user = auth()->user();
+        $user = Auth::user();
         if ($user->role && $user->role->name === 'restaurateur') {
-            return redirect()->intended(route('restaurateur.dashboard'));
+            return Redirect::intended(Route::getRoutes()->hasNamedRoute('restaurateur.dashboard') ? 
+                route('restaurateur.dashboard') : '/restaurateur/dashboard');
         }
-        return redirect()->intended('/');
+        if ($user->role && $user->role->name === 'employee') {
+            return Redirect::intended(Route::getRoutes()->hasNamedRoute('employee.dashboard') ? 
+                route('employee.dashboard') : '/employee/dashboard');
+        }
+
+        return Redirect::intended('/');
     }
 
     /**

@@ -60,6 +60,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/restaurateur/dashboard/{restaurant}', [RestaurateurDashboardController::class, 'show'])->name('restaurateur.dashboard.show');
 });
 
+// Dashboard employé
+use App\Http\Controllers\EmployeeAvailabilityController;
+Route::middleware(['auth', 'employee'])->prefix('employee')->name('employee.')->group(function () {
+    Route::get('/dashboard', [EmployeeAvailabilityController::class, 'dashboard'])->name('dashboard');
+    Route::get('/availabilities/create', [EmployeeAvailabilityController::class, 'create'])->name('availabilities.create');
+    Route::post('/availabilities', [EmployeeAvailabilityController::class, 'store'])->name('availabilities.store');
+    Route::delete('/availabilities/{availability}', [EmployeeAvailabilityController::class, 'destroy'])->name('availabilities.destroy');
+});
+
 // Routes d'administration
 use App\Http\Controllers\AdminDashboardController;
 

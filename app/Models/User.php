@@ -86,4 +86,44 @@ class User extends Authenticatable
     {
         return $this->clientFoodOrders();
     }
+    
+    /**
+     * Get all availabilities submitted by this user (as employee)
+     */
+    public function availabilities()
+    {
+        return $this->hasMany(EmployeeAvailability::class);
+    }
+    
+    /**
+     * Get all schedules assigned to this user (as employee)
+     */
+    public function schedules()
+    {
+        return $this->hasMany(EmployeeSchedule::class);
+    }
+    
+    /**
+     * Get all schedules created by this user (as restaurateur)
+     */
+    public function createdSchedules()
+    {
+        return $this->hasMany(EmployeeSchedule::class, 'created_by');
+    }
+    
+    /**
+     * Check if the user is an employee
+     */
+    public function isEmployee()
+    {
+        return $this->role && $this->role->name === 'employee';
+    }
+    
+    /**
+     * Check if the user is a restaurateur
+     */
+    public function isRestaurateur()
+    {
+        return $this->role && $this->role->name === 'restaurateur';
+    }
 }
